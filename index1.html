@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Page AJAX avec Bootstrap</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Page AJAX avec Bootstrap</h1>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="equipe-list">Liste des équipes:</label>
+                <select class="form-control" id="equipe-list">
+                    <option value="">Sélectionner une équipe</option>
+                </select>
+            </div>
+            <table>
+            <tr>
+                <td>
+                <div class="col-md-4">
+                    <label>Liste des matchs:</label>
+                    <div id="match-list">
+
+                    </div>
+                </div>
+            </td>
+            <td>
+                <div class="col-md-4">
+                    <label>Liste des joueurs:</label>
+                    <div id="joueur-list">
+
+                    </div>
+                </div>
+            </td>
+            </tr>
+        </table>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            // charger la liste des équipes au chargement de la page
+            $.ajax({
+                url: "liste_equipes.php",
+                type: "GET",
+                success: function(data){
+                    $("#equipe-list").html(data);
+                }
+            });
+
+            // quand une équipe est sélectionnée
+            $("#equipe-list").change(function(){
+                var equipe_id = $(this).val();
+                if (equipe_id == "") {
+                    $("#match-list").html("");
+                    $("#joueur-list").html("");
+                } else {
+                    // charger la liste des matchs pour l'équipe sélectionnée
+                    $.ajax({
+                        url: "liste_matchs.php",
+                        type: "POST",
+                        data: { equipe_id: equipe_id },
+                        success: function(data){
+                            $("#match-list").html(data);
+                        }
+                    });
+
+                    // charger la liste des joueurs pour l'équipe sélectionnée
+                    $.ajax({
+                        url: "liste_joueurs.php",
+                        type: "POST",
+                        data: { equipe_id: equipe_id },
+                        success: function(data){
+                            $("#joueur-list").html(data);
+                        }
+                    });
+
+                }
+            });
+        });
+    </script>
+</body>
+</html>
